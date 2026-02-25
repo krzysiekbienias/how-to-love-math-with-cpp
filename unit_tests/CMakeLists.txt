@@ -20,6 +20,7 @@ target_link_libraries(test_environment
         core_lib
         GTest::gtest
         GTest::gtest_main
+        GTest::gmock
 )
 
 include(GoogleTest)

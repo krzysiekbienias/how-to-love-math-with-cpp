@@ -2,21 +2,46 @@
 #include <string>
 
 
-
-class Complex
-{
+class Complex {
 public:
-    int a;
-    int b;
-    Complex(int a=0,int b=0);
+    double a;
+    double b;
 
-    void input(std::string s);
+    Complex(double a = 0.0, double b = 0.0);
 
-    Complex operator+(const Complex& other) const;
-    Complex conjugate() const;
-    double modulus() const;
+    Complex operator+(const Complex &other) const;
 
+    Complex operator+(double x) const;
 
+    Complex operator*(const Complex &other) const;
+
+    Complex operator*(double x) const;
+
+    Complex operator-(const Complex &other) const;
+
+    Complex operator-(double x) const;
+
+    Complex operator/(const Complex &other) const;
+
+    Complex operator/(double x) const;
+
+    Complex conj() const;
+
+    double modulusSquare() const;
+
+    double abs() const;
+
+    double real() const;
+
+    double imag() const;
+
+    Complex exp() const;
 };
 
-std::ostream& operator<<(std::ostream& os, const Complex& c);
+Complex operator+(double x, const Complex &z);
+
+Complex operator-(double x, const Complex &z);
+
+Complex operator*(double x, const Complex &z);
+
+Complex operator/(double x, const Complex &z);

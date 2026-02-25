@@ -21,6 +21,8 @@ add_library(core_lib STATIC
         src/numbers_theory/great_common_divisor.cpp
         src/numbers_theory/big_integer_exponential.cpp
         src/numbers_theory/binary_exponential.cpp
+        src/numbers_theory/prime_factorization.cpp
+        src/numbers_theory/all_factors.cpp
 
         # add more .cpp here as project grows
 )

@@ -1,84 +1,104 @@
 #include "complex_numbers/complex.hpp"
-#include <iostream>
+
+#include <cmath>
+#include <stdexcept>
+#include "constants.hpp"
 
 
-Complex::Complex(int a, int b) : a(a), b(b) {};
 
-void Complex::input(std::string s) {
-    auto skipSpaces = [&](size_t &i) {
-        while (i < s.size() && std::isspace(static_cast<unsigned char>(s[i]))) ++i;
+
+    Complex::Complex(double a, double b) : a(a), b(b) {
     };
 
-    auto parseInt = [&](size_t &i) -> int {
-        skipSpaces(i);
-        bool neg = false;
-        if (i < s.size() && (s[i] == '+' || s[i] == '-')) {
-            neg = (s[i] == '-');
-            ++i;
-        }
-        skipSpaces(i);
-        if (i >= s.size() || !std::isdigit(static_cast<unsigned char>(s[i])))
-            throw std::invalid_argument("Bad complex format. Use: a+bi or a-bi (e.g. 3-5i).");
-
-        int val = 0;
-        while (i < s.size() && std::isdigit(static_cast<unsigned char>(s[i]))) {
-            val = val * 10 + (s[i] - '0');
-            ++i;
-        }
-        return neg ? -val : val;
-    };
-
-    size_t i = 0;
-
-    // real part: a
-    int real = parseInt(i);
-
-    // sign between a and b: '+' or '-'
-    skipSpaces(i);
-    if (i >= s.size() || (s[i] != '+' && s[i] != '-'))
-        throw std::invalid_argument("Bad complex format. Use: a+bi or a-bi (e.g. 3-5i).");
-    char sign = s[i];
-    ++i;
-
-    // imaginary magnitude: b (digits only, sign comes from '+'/'-' above)
-    skipSpaces(i);
-    if (i >= s.size() || !std::isdigit(static_cast<unsigned char>(s[i])))
-        throw std::invalid_argument("Bad complex format. Use: a+bi or a-bi (e.g. 3-5i).");
-
-    int imag = 0;
-    while (i < s.size() && std::isdigit(static_cast<unsigned char>(s[i]))) {
-        imag = imag * 10 + (s[i] - '0');
-        ++i;
+    Complex Complex::operator+(const Complex &other) const {
+        return {a + other.a, b + other.b};
     }
 
-    // trailing 'i'
-    skipSpaces(i);
-    if (i >= s.size() || s[i] != 'i')
-        throw std::invalid_argument("Bad complex format. Use: a+bi or a-bi (e.g. 3-5i).");
-    ++i;
-
-    // no extra junk at the end
-    skipSpaces(i);
-    if (i != s.size())
-        throw std::invalid_argument("Bad complex format. Use: a+bi or a-bi (e.g. 3-5i).");
-
-    a = real;
-    b = (sign == '-') ? -imag : imag;
-}
-
-Complex Complex::operator+(const Complex &other) const {
-    return Complex(a + other.a, b + other.b);
-}
+    Complex Complex::operator+(double x) const {
+        return {a + x, b};
+    }
 
 
-Complex Complex::conjugate() const {
-    return Complex(a, -b);
-}
+    Complex Complex::operator-(const Complex &other) const {
+        return {a - other.a, b - other.b};
+    }
 
-double Complex::modulus() const {
-    return sqrt(a * a + b * b);
-}
+    Complex Complex::operator-(double x) const {
+        return {a - x, b};
+    }
 
-std::ostream &operator <<(std::ostream &os, const Complex &c) {
-    return os << c.a << "+" << c.b << "i";
-}
+    Complex Complex::operator*(const Complex &other) const {
+        return {a * other.a - b * other.b, b * other.a + a * other.b};
+    }
+
+    Complex Complex::operator*(double x) const {
+        return {a * x, b * x};
+    }
+
+    Complex Complex::operator/(const Complex &other) const {
+        //z1=a+bi
+        //z2=c+di
+        double c = other.a;
+        double d = other.b;
+
+        double denom = c * c + d * d;
+
+        if (denom == 0.0) {
+            throw std::domain_error("Complex division by 0+0i.");
+        }
+        double real = (a * c + b * d) / denom;
+        double imag = (b * c - a * d) / denom;
+
+        return {real, imag};
+    }
+
+    Complex Complex::operator/(double x) const {
+        return {a / x, b / x};
+    }
+
+    Complex Complex::conj() const {
+        return {a, -b};
+    }
+
+    double Complex::modulusSquare() const {
+        return a * a + b * b;
+    }
+
+    double Complex::abs() const {
+        return sqrt(a * a + b * b);
+    }
+
+    double Complex::real() const {
+        return a;
+    }
+
+    double Complex::imag() const {
+        return b;
+    }
+
+    Complex Complex::exp() const {
+        double real = std::pow(constants::e, a) * cos(b);
+        double imag = std::pow(constants::e, a) * sin(b);
+        return {real, imag};
+    }
+
+    //non-member function
+    Complex operator+(double x, const Complex &z) {
+        return {x + z.a, z.b};
+    }
+
+    Complex operator-(double x, const Complex &z) {
+        return {x - z.a, -z.b};
+    }
+
+    Complex operator*(double x, const Complex &z) {
+        return {x * z.a, x * z.b};
+    }
+
+    Complex operator/(double x, const Complex &z) {
+        double denom = z.a * z.a + z.b * z.b;
+        double real = x * z.a / denom;
+        double imag = -x * z.b / denom;
+        return {real, imag};
+    }
+

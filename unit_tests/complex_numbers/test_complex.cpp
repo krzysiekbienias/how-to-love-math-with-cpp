@@ -1,180 +1,248 @@
-#include <gtest/gtest.h>
-#include <stdexcept>
-#include <string>
-
 #include "complex_numbers/complex.hpp"
+#include <gtest/gtest.h>
+#include "constants.hpp"
 
-void expectComplexEq(const Complex& c, int ra, int ib) {
-    EXPECT_EQ(c.a, ra);
-    EXPECT_EQ(c.b, ib);
+
+static void ExpectComplexNear(const Complex& actual,
+                              const Complex& expected,
+                              double epsilon = constants::EPSILON) {
+    EXPECT_NEAR(actual.real(), expected.real(), epsilon);
+    EXPECT_NEAR(actual.imag(), expected.imag(), epsilon);
 }
 
-// ----------------------------
-// Constructor tests
-// ----------------------------
+// --- Real part ---
 
-TEST(ComplexCtor, DefaultCtorIsZeroZero) {
-    Complex c;
-    expectComplexEq(c, 0, 0);
+TEST(ComplexNumbers, RealPart_PurelyReal) {
+    const Complex c{1.0, 0.0};
+    EXPECT_NEAR(c.real(), 1.0, constants::EPSILON);
 }
 
-TEST(ComplexCtor, TwoArgCtorSetsFields) {
-    Complex c(3, -5);
-    expectComplexEq(c, 3, -5);
+TEST(ComplexNumbers, RealPart_PurelyImaginary) {
+    const Complex c{0.0, 1.0};
+    EXPECT_NEAR(c.real(), 0.0, constants::EPSILON);
 }
 
-TEST(ComplexCtor, OneArgCtorSetsRealAndZeroImag) {
-    Complex c(7);
-    expectComplexEq(c, 7, 0);
+TEST(ComplexNumbers, RealPart_RealAndImaginary) {
+    const Complex c{1.0, 2.0};
+    EXPECT_NEAR(c.real(), 1.0, constants::EPSILON);
 }
 
-// ----------------------------
-// operator+ tests
-// ----------------------------
+// --- Imaginary part ---
 
-TEST(ComplexPlus, SimpleAdd) {
-    Complex c1(3, 4);
-    Complex c2(2, 5);
-    Complex res = c1 + c2;
-    expectComplexEq(res, 5, 9);
+TEST(ComplexNumbers, ImaginaryPart_PurelyReal) {
+    const Complex c{1.0, 0.0};
+    EXPECT_NEAR(c.imag(), 0.0, constants::EPSILON);
 }
 
-TEST(ComplexPlus, AddWithNegatives) {
-    Complex c1(3, -4);
-    Complex c2(-2, 5);
-    Complex res = c1 + c2;
-    expectComplexEq(res, 1, 1);
+TEST(ComplexNumbers, ImaginaryPart_PurelyImaginary) {
+    const Complex c{0.0, 1.0};
+    EXPECT_NEAR(c.imag(), 1.0, constants::EPSILON);
 }
 
-TEST(ComplexPlus, AddWithZeros) {
-    Complex c1;
-    Complex c2(7, -8);
-    Complex res = c1 + c2;
-    expectComplexEq(res, 7, -8);
+TEST(ComplexNumbers, ImaginaryPart_RealAndImaginary) {
+    const Complex c{1.0, 2.0};
+    EXPECT_NEAR(c.imag(), 2.0, constants::EPSILON);
 }
 
-TEST(ComplexPlus, DoesNotMutateOperands) {
-    Complex c1(3, 4);
-    Complex c2(2, 5);
+// --- Imaginary unit ---
 
-    Complex res = c1 + c2;
-
-    // result ok
-    expectComplexEq(res, 5, 9);
-
-    // operands unchanged
-    expectComplexEq(c1, 3, 4);
-    expectComplexEq(c2, 2, 5);
+TEST(ComplexNumbers, ImaginaryUnit) {
+    const Complex c1{0.0, 1.0};
+    const Complex c2{0.0, 1.0};
+    ExpectComplexNear(c1 * c2, Complex{-1.0, 0.0}, constants::EPSILON);
 }
 
-// ----------------------------
-// conjugate() tests
-// ----------------------------
+// --- Arithmetic: Addition ---
 
-TEST(ComplexConjugate, FlipsImaginarySign) {
-    Complex z(3, 5);
-    Complex c = z.conjugate();
-    EXPECT_EQ(c.a, 3);
-    EXPECT_EQ(c.b, -5);
+TEST(ComplexNumbers, Add_PurelyRealNumbers) {
+    const Complex c1{1.0, 0.0};
+    const Complex c2{2.0, 0.0};
+    ExpectComplexNear(c1 + c2, Complex{3.0, 0.0}, constants::EPSILON);
 }
 
-TEST(ComplexConjugate, WorksForNegativeImaginary) {
-    Complex z(3, -5);
-    Complex c = z.conjugate();
-    EXPECT_EQ(c.a, 3);
-    EXPECT_EQ(c.b, 5);
+TEST(ComplexNumbers, Add_PurelyImaginaryNumbers) {
+    const Complex c1{0.0, 1.0};
+    const Complex c2{0.0, 2.0};
+    ExpectComplexNear(c1 + c2, Complex{0.0, 3.0}, constants::EPSILON);
 }
 
-TEST(ComplexConjugate, ZeroImaginaryStaysZero) {
-    Complex z(7, 0);
-    Complex c = z.conjugate();
-    EXPECT_EQ(c.a, 7);
-    EXPECT_EQ(c.b, 0);
+TEST(ComplexNumbers, Add_RealAndImaginaryNumbers) {
+    const Complex c1{1.0, 2.0};
+    const Complex c2{3.0, 4.0};
+    ExpectComplexNear(c1 + c2, Complex{4.0, 6.0}, constants::EPSILON);
 }
 
-TEST(ComplexConjugate, ZeroZeroStaysZeroZero) {
-    Complex z(0, 0);
-    Complex c = z.conjugate();
-    EXPECT_EQ(c.a, 0);
-    EXPECT_EQ(c.b, 0);
+// --- Arithmetic: Subtraction ---
+
+TEST(ComplexNumbers, Subtract_PurelyRealNumbers) {
+    const Complex c1{1.0, 0.0};
+    const Complex c2{2.0, 0.0};
+    ExpectComplexNear(c1 - c2, Complex{-1.0, 0.0}, constants::EPSILON);
 }
 
-TEST(ComplexConjugate, DoesNotMutateOriginal) {
-    Complex z(3, 5);
-    Complex c = z.conjugate();
-
-    // original unchanged
-    EXPECT_EQ(z.a, 3);
-    EXPECT_EQ(z.b, 5);
-
-    // conjugate correct
-    EXPECT_EQ(c.a, 3);
-    EXPECT_EQ(c.b, -5);
+TEST(ComplexNumbers, Subtract_PurelyImaginaryNumbers) {
+    const Complex c1{0.0, 1.0};
+    const Complex c2{0.0, 2.0};
+    ExpectComplexNear(c1 - c2, Complex{0.0, -1.0}, constants::EPSILON);
 }
 
-// Optional "property-like" test: conjugate twice gives original
-TEST(ComplexConjugate, DoubleConjugateGivesOriginal) {
-    Complex z(-12, 34);
-    Complex back = z.conjugate().conjugate();
-    EXPECT_EQ(back.a, z.a);
-    EXPECT_EQ(back.b, z.b);
+TEST(ComplexNumbers, Subtract_RealAndImaginaryNumbers) {
+    const Complex c1{1.0, 2.0};
+    const Complex c2{3.0, 4.0};
+    ExpectComplexNear(c1 - c2, Complex{-2.0, -2.0}, constants::EPSILON);
 }
 
-#include <cmath>
+// --- Arithmetic: Multiplication ---
 
-// ----------------------------
-// modulus() tests
-// ----------------------------
-
-TEST(ComplexModulus, ZeroIsZero) {
-    Complex z(0, 0);
-    EXPECT_DOUBLE_EQ(z.modulus(), 0.0);
+TEST(ComplexNumbers, Multiply_PurelyRealNumbers) {
+    const Complex c1{1.0, 0.0};
+    const Complex c2{2.0, 0.0};
+    ExpectComplexNear(c1 * c2, Complex{2.0, 0.0}, constants::EPSILON);
 }
 
-TEST(ComplexModulus, PureReal) {
-    Complex z(5, 0);
-    EXPECT_DOUBLE_EQ(z.modulus(), 5.0);
+TEST(ComplexNumbers, Multiply_PurelyImaginaryNumbers) {
+    const Complex c1{0.0, 1.0};
+    const Complex c2{0.0, 2.0};
+    ExpectComplexNear(c1 * c2, Complex{-2.0, 0.0}, constants::EPSILON);
 }
 
-TEST(ComplexModulus, PureImag) {
-    Complex z(0, -7);
-    EXPECT_DOUBLE_EQ(z.modulus(), 7.0);
+TEST(ComplexNumbers, Multiply_RealAndImaginaryNumbers) {
+    const Complex c1{1.0, 2.0};
+    const Complex c2{3.0, 4.0};
+    ExpectComplexNear(c1 * c2, Complex{-5.0, 10.0}, constants::EPSILON);
 }
 
-TEST(ComplexModulus, ThreeFourFive) {
-    Complex z(3, 4);
-    EXPECT_DOUBLE_EQ(z.modulus(), 5.0);
+// --- Arithmetic: Division ---
+
+TEST(ComplexNumbers, Divide_PurelyRealNumbers) {
+    const Complex c1{1.0, 0.0};
+    const Complex c2{2.0, 0.0};
+    ExpectComplexNear(c1 / c2, Complex{0.5, 0.0}, constants::EPSILON);
 }
 
-TEST(ComplexModulus, SymmetricForSigns) {
-    Complex z1(3, 4);
-    Complex z2(-3, 4);
-    Complex z3(3, -4);
-    Complex z4(-3, -4);
-
-    EXPECT_DOUBLE_EQ(z1.modulus(), z2.modulus());
-    EXPECT_DOUBLE_EQ(z1.modulus(), z3.modulus());
-    EXPECT_DOUBLE_EQ(z1.modulus(), z4.modulus());
+TEST(ComplexNumbers, Divide_PurelyImaginaryNumbers) {
+    const Complex c1{0.0, 1.0};
+    const Complex c2{0.0, 2.0};
+    ExpectComplexNear(c1 / c2, Complex{0.5, 0.0}, constants::EPSILON);
 }
 
-
-// ----------------------------
-// modulus() tests with epsilon
-// ----------------------------
-
-TEST(ComplexModulus, WorksWithNonTrivialValues) {
-    Complex z(1, 1);
-    double expected = std::sqrt(2.0);
-    EXPECT_NEAR(z.modulus(), expected, 1e-9);
+TEST(ComplexNumbers, Divide_RealAndImaginaryNumbers) {
+    const Complex c1{1.0, 2.0};
+    const Complex c2{3.0, 4.0};
+    ExpectComplexNear(c1 / c2, Complex{0.44, 0.08}, constants::EPSILON);
 }
 
-TEST(ComplexModulus, LargerValuesEpsilonCheck) {
-    Complex z(123, 456);
-    double expected = std::sqrt(123.0 * 123.0 + 456.0 * 456.0);
-    EXPECT_NEAR(z.modulus(), expected, 1e-9);
+// --- Absolute value ---
+
+TEST(ComplexNumbers, Abs_PositivePurelyReal) {
+    const Complex c{5.0, 0.0};
+    EXPECT_NEAR(c.abs(), 5.0, constants::EPSILON);
 }
 
-TEST(ComplexModulus, ModulusEqualsConjugateModulus) {
-    Complex z(3, -7);
-    EXPECT_NEAR(z.modulus(), z.conjugate().modulus(), 1e-9);
+TEST(ComplexNumbers, Abs_NegativePurelyReal) {
+    const Complex c{-5.0, 0.0};
+    EXPECT_NEAR(c.abs(), 5.0, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, Abs_PurelyImaginaryPositive) {
+    const Complex c{0.0, 5.0};
+    EXPECT_NEAR(c.abs(), 5.0, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, Abs_PurelyImaginaryNegative) {
+    const Complex c{0.0, -5.0};
+    EXPECT_NEAR(c.abs(), 5.0, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, Abs_RealAndImaginary) {
+    const Complex c{3.0, 4.0};
+    EXPECT_NEAR(c.abs(), 5.0, constants::EPSILON);
+}
+
+// --- Conjugate ---
+
+TEST(ComplexNumbers, Conj_PurelyReal) {
+    const Complex c{5.0, 0.0};
+    ExpectComplexNear(c.conj(), Complex{5.0, 0.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, Conj_PurelyImaginary) {
+    const Complex c{0.0, 5.0};
+    ExpectComplexNear(c.conj(), Complex{0.0, -5.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, Conj_RealAndImaginary) {
+    const Complex c{1.0, 1.0};
+    ExpectComplexNear(c.conj(), Complex{1.0, -1.0}, constants::EPSILON);
+}
+
+// --- Exponential ---
+
+TEST(ComplexNumbers, Exp_EulersIdentity) {
+    const Complex c{0.0, constants::Pi};
+    ExpectComplexNear(c.exp(), Complex{-1.0, 0.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, Exp_Zero) {
+    const Complex c{0.0, 0.0};
+    ExpectComplexNear(c.exp(), Complex{1.0, 0.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, Exp_PurelyReal) {
+    const Complex c{1.0, 0.0};
+    ExpectComplexNear(c.exp(), Complex{constants::e, 0.0}, constants::EPSILON);
+}
+
+// Extra credit
+
+TEST(ComplexNumbers, Exp_RealAndImaginary) {
+    const Complex c{std::log(2.0), constants::Pi};
+    ExpectComplexNear(c.exp(), Complex{-2.0, 0.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, Exp_ResultsInRealAndImaginary) {
+    const Complex c{std::log(2.0) / 2.0, constants::Pi / 4.0};
+    ExpectComplexNear(c.exp(), Complex{1.0, 1.0}, constants::EPSILON);
+}
+
+// --- Operations between real and complex ---
+
+TEST(ComplexNumbers, AddRealToComplex) {
+    const Complex c{1.0, 2.0};
+    ExpectComplexNear(c + 5.0, Complex{6.0, 2.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, AddComplexToReal) {
+    const Complex c{1.0, 2.0};
+    ExpectComplexNear(5.0 + c, Complex{6.0, 2.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, SubtractRealFromComplex) {
+    const Complex c{5.0, 7.0};
+    ExpectComplexNear(c - 4.0, Complex{1.0, 7.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, SubtractComplexFromReal) {
+    const Complex c{5.0, 7.0};
+    ExpectComplexNear(4.0 - c, Complex{-1.0, -7.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, MultiplyComplexByReal) {
+    const Complex c{2.0, 5.0};
+    ExpectComplexNear(c * 5.0, Complex{10.0, 25.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, MultiplyRealByComplex) {
+    const Complex c{2.0, 5.0};
+    ExpectComplexNear(5.0 * c, Complex{10.0, 25.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, DivideComplexByReal) {
+    const Complex c{10.0, 100.0};
+    ExpectComplexNear(c / 10.0, Complex{1.0, 10.0}, constants::EPSILON);
+}
+
+TEST(ComplexNumbers, DivideRealByComplex) {
+    const Complex c{1.0, 1.0};
+    ExpectComplexNear(5.0 / c, Complex{2.5, -2.5}, constants::EPSILON);
 }
