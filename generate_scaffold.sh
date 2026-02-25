@@ -41,6 +41,6 @@ create_if_missing "$HEADER_FILE" \
 $'#pragma once\n\n#include <string>\n#include <vector>\n\n'
 
 create_if_missing "$TEST_FILE" \
-$'#include "'"${FOLDER}/${NAME}.hpp"'"
-#include <gtest/gtest.h>
+"#include \"${FOLDER}/${NAME}.hpp\"
+#include <gtest/gtest.h>"
 
