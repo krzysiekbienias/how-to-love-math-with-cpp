@@ -1,10 +1,10 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <types.hpp>
 
-
-std::vector<int> primeFactors(int n) {
-    std::vector<int> results;
+std::vector<i64> primeFactors(i64 n) {
+    std::vector<i64> results;
     if (n<=1) return {};
     //special check for even numbers to decrease the numbers of iterations
     while (n%2==0) {
@@ -22,9 +22,9 @@ std::vector<int> primeFactors(int n) {
     return results;
 }
 
-std::unordered_map<int,int> countPrimeFactors(const std::vector<int> &factors) {
-    std::unordered_map<int, int> res;
-    for (int x:factors) {
+std::unordered_map<i64,int> countPrimeFactors(const std::vector<i64> &factors) {
+    std::unordered_map<i64, int> res;
+    for (i64 x:factors) {
         res[x]++;
     }
     return res;
