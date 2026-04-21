@@ -9,7 +9,8 @@ endif()
 
 find_package(GTest REQUIRED)
 
-add_executable(test_environment ${TEST_SOURCES})
+add_executable(test_environment ${TEST_SOURCES}
+        computational_geometry/geometry_on_plane/templates/test_vector.cpp)
 set_target_properties(test_environment PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )

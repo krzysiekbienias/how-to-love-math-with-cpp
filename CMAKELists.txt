@@ -16,13 +16,25 @@ option(ENABLE_DEV_MAIN "Build dev_main executable (experiments)" ON)
 add_library(core_lib STATIC
         src/core_lib.cpp
         src/complex_numbers/complex.cpp
+        src/combinatorics/combinations.cpp
         src/linear_algebra/matrices/determinant3x3.cpp
         src/linear_algebra/matrices/display.cpp
+        src/linear_algebra/matrices/operations/multiplication.cpp
+
+        #src/linear_algebra/matrices/operations/addition.cpp
+        #src/linear_algebra/matrices/operations/substraction.cpp
         src/numbers_theory/great_common_divisor.cpp
         src/numbers_theory/big_integer_exponential.cpp
         src/numbers_theory/binary_exponential.cpp
         src/numbers_theory/prime_factorization.cpp
         src/numbers_theory/all_factors.cpp
+        src/numbers_theory/fraction.cpp
+        src/numbers_theory/least_common_multipy.cpp
+        src/numbers_theory/legendre_divisibility.cpp
+        src/numbers_theory/count_nb_of_divisors.cpp
+
+        src/computational_geometry/geometry_on_plane/grid_geometry/domain.cpp
+
 
         # add more .cpp here as project grows
 )

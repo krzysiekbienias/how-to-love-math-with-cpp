@@ -52,3 +52,13 @@ This project is about transforming math from something you “learn” into some
 * Understand first, optimize second.
 * Write code that explains the math.
 * Write math that improves the code.
+
+## Table of Content
+### Numbers Theory
+In this topic we covered:
+- calculating gcd
+- calculating power for big numbers (represented as string) leveraging from modular arithmetic and binary exponential  
+### Complex Numbers
+- basic operations (adding, substracting, multiplication)
+
+
