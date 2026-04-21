@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
-#include <vector>
+#include "types.hpp"
 
-int gcdRecursive(int a, int b);
-int gcdIterativeEuclides(int a, int b);
+
+i64 gcdRecursive(i64 a, i64 b);
+i64 gcdIterativeEuclides(i64 a, i64 b);
